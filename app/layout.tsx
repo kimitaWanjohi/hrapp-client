@@ -3,6 +3,10 @@ import "./globals.css";
 import "./data-tables-css.css";
 import "./satoshi.css";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
+import AuthGuard from "@/components/AuthGuard/AuthGuard";
+
+
 import Loader from "@/components/common/Loader";
 
 import Sidebar from "@/components/Sidebar";
@@ -15,11 +19,17 @@ export default function RootLayout({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const pathname = usePathname();
+
+  const isAuthPage = pathname === '/auth/signin' || pathname === '/auth/signup' || pathname === '/auth/forgot-password' || pathname === '/auth/reset-password';
+
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 1000);
   }, []);
+
+
 
   return (
     <html lang="en">
@@ -28,24 +38,21 @@ export default function RootLayout({
           {loading ? (
             <Loader />
           ) : (
-            <div className="flex h-screen overflow-hidden">
-              {/* <!-- ===== Sidebar Start ===== --> */}
-              <Sidebar
-                sidebarOpen={sidebarOpen}
-                setSidebarOpen={setSidebarOpen}
-              />
-              {/* <!-- ===== Sidebar End ===== --> */}
-
-              {/* <!-- ===== Content Area Start ===== --> */}
-              <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
-                {/* <!-- ===== Header Start ===== --> */}
-                <Header
+            <AuthGuard>
+              <div className="flex h-screen overflow-hidden">
+                {
+                  !isAuthPage &&
+                <Sidebar
                   sidebarOpen={sidebarOpen}
                   setSidebarOpen={setSidebarOpen}
                 />
-                {/* <!-- ===== Header End ===== --> */}
-
-                {/* <!-- ===== Main Content Start ===== --> */}
+                }
+              <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+                { !isAuthPage &&
+                  <Header
+                  sidebarOpen={sidebarOpen}
+                  setSidebarOpen={setSidebarOpen}
+                />}
                 <main>
                   <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
                     {children}
@@ -55,6 +62,7 @@ export default function RootLayout({
               </div>
               {/* <!-- ===== Content Area End ===== --> */}
             </div>
+            </AuthGuard>
           )}
         </div>
       </body>

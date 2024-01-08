@@ -18,21 +18,24 @@ const SignIn: React.FC = () => {
         <div className="flex flex-wrap items-center">
           <div className="hidden w-full xl:block xl:w-1/2">
             <div className="py-17.5 px-26 text-center">
-              <Link className="mb-5.5 inline-block" href="/">
+              <Link className="mb-5.5 flex items-center justify-center gap-2" href="/">
                 <Image
                   className="hidden dark:block"
-                  src={"/images/logo/logo.svg"}
+                  src={"/images/logo/logo-icon.svg"}
                   alt="Logo"
-                  width={176}
+                  width={32}
                   height={32}
                 />
                 <Image
                   className="dark:hidden"
-                  src={"/images/logo/logo-dark.svg"}
+                  src={"/images/logo/logo-icon.svg"}
                   alt="Logo"
-                  width={176}
+                  width={32}
                   height={32}
                 />
+                <h2 className="text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
+                  Herxel Hr
+                </h2>
               </Link>
 
               <p className="2xl:px-20">
