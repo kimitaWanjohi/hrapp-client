@@ -2,7 +2,7 @@
 
 import { useRouter, usePathname } from 'next/navigation';
 import React, { useEffect } from 'react';
-import authState from '@/lib/authState';
+import AuthState from '@/lib/authState';
 
 
 export default function AuthGuard({
@@ -14,7 +14,7 @@ export default function AuthGuard({
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!authState.isLoggedIn() && pathname !== '/auth/signin' && pathname !== '/auth/signup' && pathname !== '/auth/forgot-password' && pathname !== '/auth/reset-password') {
+    if (!AuthState.isLoggedIn() && pathname !== '/auth/signin' && pathname !== '/auth/signup' && pathname !== '/auth/forgot-password' && pathname !== '/auth/reset-password') {
       router.push('/auth/signin');
     }
   }, [pathname]);

@@ -33,11 +33,11 @@ export const logout = () => {
   }
 }
 
-const authState = {
+const AuthState = {
   isLoggedIn,
   getToken,
   setToken,
   logout
 }
 
-export default authState;
+export default AuthState;
