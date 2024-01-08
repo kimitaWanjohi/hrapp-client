@@ -1,0 +1,1 @@
+export const GRAPHQL_SERVER: string = process.env.NEXT_PUBLIC_GRAPHQL_SERVER || 'http://localhost:8000/graphql';
