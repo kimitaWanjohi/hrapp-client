@@ -1,20 +1,15 @@
 'use client';
 
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import { Metadata } from "next";
 import { useRouter } from "next/navigation";
-import AuthState from "@/lib/authState";
 import GraphqlClient from "@/lib/client";
+import { UserType} from "@/types/user";
 
-// export const metadata: Metadata = {
-//   title: "Signin Page | Herxel HRMS",
-//   description: "Signin Page | Herxel HRMS",
-//   // other metadata
-// };
-
+import { login } from "@/store/features/authSlice";
+import { useDispatch, useSelector } from "@/store/hooks";
 
 const SignInMutation = `
 mutation($username: String! $password: String!) {
@@ -23,6 +18,18 @@ mutation($username: String! $password: String!) {
       id
       username
       email
+      isStaff
+      isSuperuser
+      dateJoined
+      company{
+        id
+      }
+      employee{
+        id
+      }
+      profile{
+        avatar
+      }
     }
     token
     payload
@@ -30,12 +37,33 @@ mutation($username: String! $password: String!) {
 }
 `;
 
+interface LoginResponse {
+  user: UserType;
+  token: string;
+  payload: payloadType;
+}
+
+interface payloadType {
+  username: string;
+  exp: number;
+  origIat: number;
+}
+
 
 const SignIn: React.FC = () => {
+  const dispatch = useDispatch();
+
+  const isLoggedIn = useSelector((state) => state.authReducer.isLoggedIn);
   const router = useRouter();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
+
+  useEffect(() => {
+    if (isLoggedIn || localStorage.getItem("token")) {
+      router.push("/");
+    }
+  }, []);
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -52,12 +80,22 @@ const SignIn: React.FC = () => {
           password: password
         }
       );
-      const {errors, data: { tokenAuth }} = data;
+
+      const { errors } = data;
+      const { tokenAuth }: { tokenAuth: LoginResponse } = data.data;
+
+
+
       if (errors) {
         setError(errors[0].message);
         return;
       } else if (tokenAuth) {
-        AuthState.setToken(tokenAuth.token);
+        dispatch(login({
+          user: tokenAuth.user,
+          token: tokenAuth.token,
+          isLoggedIn: true,
+          payload: tokenAuth.payload
+        }));
         router.push("/");
       } else {
         setError("Something Went Wrong!!!")
@@ -96,8 +134,7 @@ const SignIn: React.FC = () => {
               </Link>
 
               <p className="2xl:px-20">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit
-                suspendisse.
+                Experience streamlined HR processes and stay connected with Herxel.
               </p>
 
               <span className="mt-15 inline-block">
@@ -227,9 +264,8 @@ const SignIn: React.FC = () => {
 
           <div className="w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2">
             <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
-              <span className="mb-1.5 block font-medium">Start for free</span>
               <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
-                Sign In to TailAdmin
+                Sign In to Herxel Hr
               </h2>
 
               <form onSubmit={handleSignIn}>
