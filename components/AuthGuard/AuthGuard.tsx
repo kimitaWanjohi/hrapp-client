@@ -1,8 +1,16 @@
 'use client';
 
-import { useRouter, usePathname } from 'next/navigation';
-import React, { useEffect } from 'react';
-import AuthState from '@/lib/authState';
+import React, {useEffect} from 'react';
+import {usePathname, useRouter} from 'next/navigation';
+
+import {UserType} from "@/types/user";
+import { useDispatch, useSelector } from "@/store/hooks";
+import { login, logOut} from "@/store/features/authSlice";
+
+const getToken = () => {
+  const token: string = localStorage.getItem('token') || '';
+  return token;
+};
 
 
 export default function AuthGuard({
@@ -10,14 +18,29 @@ export default function AuthGuard({
 }: {
   children: React.ReactNode;
 }) {
-  const router = useRouter();
   const pathname = usePathname();
+  const router = useRouter();
+  const dispatch = useDispatch();
+
+  const isLoggedIn = useSelector((state) => state.authReducer.isLoggedIn);
+
+  const isAuthPage = pathname.includes('/auth/');
 
   useEffect(() => {
-    if (!AuthState.isLoggedIn() && pathname !== '/auth/signin' && pathname !== '/auth/signup' && pathname !== '/auth/forgot-password' && pathname !== '/auth/reset-password') {
-      router.push('/auth/signin');
+    async function fetchUser() {
+      if(getToken()) {
+        dispatch(login({
+          user: JSON.parse(localStorage.getItem('user') || '{}') as UserType,
+          token: getToken(),
+          isLoggedIn: true,
+          payload: JSON.parse(localStorage.getItem('payload') || '{}'),
+        }));
+      } else {
+        dispatch(logOut());
+      }
     }
-  }, [pathname]);
+    fetchUser().then(r => r);
+  }, [dispatch, isLoggedIn]);
 
   return <>{children}</>;
 }

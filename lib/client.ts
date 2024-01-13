@@ -1,7 +1,14 @@
 import {GRAPHQL_SERVER} from '@/const';
-import {getToken} from './authState';
 
-export default async function GraphqlClient(query: string, variables: any, cache: any = null) {
+const getToken = () => {
+  const token = localStorage.getItem('token');
+  if (token === null) {
+    return '';
+  }
+  return token;
+}
+
+export default async function GraphqlClient(query: string, variables: any = null, cache: any = null) {
   try {
     const res = await fetch(GRAPHQL_SERVER, {
       method: 'POST',

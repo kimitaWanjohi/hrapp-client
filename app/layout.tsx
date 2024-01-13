@@ -11,6 +11,7 @@ import Loader from "@/components/common/Loader";
 
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
+import {StoreProvider} from "@/store/provider";
 
 export default function RootLayout({
   children,
@@ -38,7 +39,8 @@ export default function RootLayout({
           {loading ? (
             <Loader />
           ) : (
-            <AuthGuard>
+            <StoreProvider>
+              <AuthGuard>
               <div className="flex h-screen overflow-hidden">
                 {
                   !isAuthPage &&
@@ -63,6 +65,7 @@ export default function RootLayout({
               {/* <!-- ===== Content Area End ===== --> */}
             </div>
             </AuthGuard>
+            </StoreProvider>
           )}
         </div>
       </body>
