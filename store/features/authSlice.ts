@@ -26,6 +26,9 @@ export const auth = createSlice({
   reducers: {
     logOut: () => {
       localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("payload");
       return initialState;
     },
     login: (state, action: PayloadAction<AuthState>) => {
@@ -33,7 +36,11 @@ export const auth = createSlice({
       state.user = action.payload.user;
       state.isLoggedIn = true;
       state.payload = action.payload;
+    //   save initial state to local storage
       localStorage.setItem("token", action.payload.token);
+      localStorage.setItem("user", JSON.stringify(action.payload.user));
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("payload", JSON.stringify(action.payload));
     },
   }
 });

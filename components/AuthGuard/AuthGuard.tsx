@@ -4,7 +4,6 @@ import React, {useEffect} from 'react';
 import {usePathname, useRouter} from 'next/navigation';
 
 import {UserType} from "@/types/user";
-import GraphqlClient from "@/lib/client";
 import { useDispatch, useSelector } from "@/store/hooks";
 import { login, logOut} from "@/store/features/authSlice";
 
@@ -13,31 +12,6 @@ const getToken = () => {
   return token;
 };
 
-const getMeQuery = `
-query Me {
-  me{
-    id
-    username
-    email
-    isStaff
-    isSuperuser
-    dateJoined
-    company{
-      id
-    }
-    employee{
-      id
-    }
-    profile{
-      avatar
-    }
-  }
-}`
-
-const getLoggedInUser = async (): Promise<UserType> => {
-  const res = await GraphqlClient(getMeQuery);
-  return res.data.me;
-}
 
 export default function AuthGuard({
   children,
@@ -54,25 +28,19 @@ export default function AuthGuard({
 
   useEffect(() => {
     async function fetchUser() {
-      if(getToken() && !isLoggedIn) {
-        const user = await getLoggedInUser()
+      if(getToken()) {
         dispatch(login({
-          user,
-          token: getToken() as string,
+          user: JSON.parse(localStorage.getItem('user') || '{}') as UserType,
+          token: getToken(),
           isLoggedIn: true,
-          payload: {},
-        }))
-      } else if (!getToken() && isLoggedIn) {
+          payload: JSON.parse(localStorage.getItem('payload') || '{}'),
+        }));
+      } else {
         dispatch(logOut());
       }
     }
     fetchUser().then(r => r);
   }, [dispatch, isLoggedIn]);
 
-  useEffect(() => {
-    if (!isLoggedIn && !isAuthPage) {
-      router.push('/auth/signin');
-    }
-  }, [pathname]);
   return <>{children}</>;
 }

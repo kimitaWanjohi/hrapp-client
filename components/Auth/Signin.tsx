@@ -18,6 +18,8 @@ mutation($username: String! $password: String!) {
       id
       username
       email
+      firstName
+      lastName
       isStaff
       isSuperuser
       dateJoined
@@ -28,7 +30,9 @@ mutation($username: String! $password: String!) {
         id
       }
       profile{
+        id
         avatar
+        role
       }
     }
     token
