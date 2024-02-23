@@ -1,6 +1,9 @@
 import React from "react";
 import { MdDashboard } from "react-icons/md";
 import { IoIosPeople } from "react-icons/io";
+import { FaChartArea } from "react-icons/fa";
+import { IoIosPerson } from "react-icons/io";
+
 
 
 export type MenuItem = {
@@ -50,6 +53,20 @@ const MenuData = () :MenuItem[] => ([
         hasChildren: false,
       }
     ]
+  },
+  {
+    id: "charts",
+    name: "Charts",
+    path: "/chart",
+    icon: <FaChartArea   className={"text-2xl"} />,
+    hasChildren: false
+  },
+  {
+    id: "profile",
+    name: "Profile",
+    path: "/profile",
+    icon: <IoIosPerson className={"text-2xl"} />,
+    hasChildren: false
   }
 ]);
 
